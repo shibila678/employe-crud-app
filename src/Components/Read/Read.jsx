@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Component } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom'
+
 import {
     TableRow,
     TableHeaderCell,
@@ -30,6 +31,7 @@ const Read = () => {
             })
 
     }, [])
+
     const onClickUpdate = (data) => {
         let { id, employeeName, department, age, gender, salary, place } = data;
         localStorage.setItem('Id', id);
@@ -51,12 +53,15 @@ const Read = () => {
         axios.delete(`https://662390713e17a3ac846f8bdd.mockapi.io/crud/crud/${id}`)
             .then(() => {
                 getData();
+                setState(false);
+                
             }).finally(() => {
                 alert('Deleted Succesfully')
             })
     }
-
+    const [state, setState] = useState(false);
     return (
+
         <div>
             <Link to='/create'>
                 <Button primary animated='vertical'>
@@ -84,7 +89,7 @@ const Read = () => {
                                 <Table.Cell>{data.id}</Table.Cell>
                                 <Table.Cell>{data.employeeName}</Table.Cell>
                                 <Table.Cell>{data.department}</Table.Cell>
-                               
+
                                 <Table.Cell>
                                     <Link to='/update'>
                                         <Button onClick={() => onClickUpdate(data)}>Update</Button>
@@ -96,8 +101,16 @@ const Read = () => {
                                     </Link>
                                 </Table.Cell>
                                 <Table.Cell>
-                                    <Button onClick={() => onDelete(data.id)}>Delete</Button>
+                                    <Button onClick={() => setState(true)}>Delete</Button>
+                                    <Confirm
+                                        open={state}
+                                        content='Are you sure you want to delete this Record?'
+                                        onCancel={() => setState(false)}
+                                        onConfirm={() => onDelete(data.id)}
+                                    />
                                 </Table.Cell>
+
+
                             </Table.Row>
                         )
                     })}
